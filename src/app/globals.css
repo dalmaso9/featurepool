@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root{
+  --brand-from: theme(colors.brandFrom);
+  --brand-to: theme(colors.brandTo);
+  --accent: theme(colors.accent);
+}
+
+html, body { height: 100%; }
+
+/* Background em pages públicas (leve, inspirado na LP) */
+.body-surface {
+  background:
+    radial-gradient(1200px 600px at 50% -200px, color-mix(in srgb, var(--brand-from) 18%, white 82%), transparent),
+    radial-gradient(900px 500px at 120% -100px, color-mix(in srgb, var(--brand-to) 22%, white 78%), transparent),
+    #f8fafc;
+}
+
+@layer components{
+  .container-app { @apply mx-auto max-w-6xl px-4; }
+  .card { @apply rounded-xl border bg-white shadow-card; }
+  .btn { @apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition; }
+  .btn-ghost { @apply text-gray-700 hover:text-gray-900 hover:bg-gray-50; }
+  .btn-primary {
+    @apply text-white;
+    background: linear-gradient(90deg, var(--brand-from), var(--brand-to));
+  }
+  .btn-primary:hover {
+    filter: brightness(1.05);
+  }
+  .text-gradient {
+    background: linear-gradient(90deg, var(--brand-from), var(--brand-to));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .underline-accent {
+    text-decoration: underline wavy var(--accent) 2px;
+    text-underline-offset: 5px;
+  }
+}

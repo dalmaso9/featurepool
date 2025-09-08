@@ -1,0 +1,16 @@
+# Node / Next.js
+node_modules/
+.next/
+out/
+dist/
+coverage/
+.yarn/
+.pnp.*
+
+# Logs & SO
+*.log
+.DS_Store
+
+# Env
+.env
+.env.*

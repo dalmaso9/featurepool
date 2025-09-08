@@ -1,0 +1,61 @@
+import NextAuth, { type NextAuthOptions } from 'next-auth'
+import CredentialsProvider from 'next-auth/providers/credentials'
+import GoogleProvider from 'next-auth/providers/google'
+import AzureADProvider from 'next-auth/providers/azure-ad'
+import { PrismaAdapter } from '@next-auth/prisma-adapter'
+import { prisma } from './prisma'
+import { env } from './env'
+
+export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma) as any,
+  session: { strategy: 'jwt' },
+  pages: {
+    signIn: '/auth/signin',
+  },
+  providers: [
+    CredentialsProvider({
+      name: 'Credentials',
+      credentials: {
+        email: { label: 'Email', type: 'email' },
+      },
+      authorize: async (credentials) => {
+        if (!credentials?.email) return null
+        const user = await prisma.user.findUnique({ where: { email: credentials.email } })
+        return user as any
+      }
+    }),
+    ...(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET ? [GoogleProvider({
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET
+    })] : []),
+    ...(env.AZURE_AD_CLIENT_ID && env.AZURE_AD_CLIENT_SECRET && env.AZURE_AD_TENANT_ID ? [AzureADProvider({
+      clientId: env.AZURE_AD_CLIENT_ID,
+      clientSecret: env.AZURE_AD_CLIENT_SECRET,
+      tenantId: env.AZURE_AD_TENANT_ID
+    })] : [])
+  ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = (user as any).role
+        token.workspaceId = (user as any).workspaceId
+        token.customerCompanyId = (user as any).customerCompanyId
+      } else if (token.sub) {
+        const u = await prisma.user.findUnique({ where: { id: token.sub } })
+        if (u) {
+          token.role = u.role
+          token.workspaceId = u.workspaceId
+          token.customerCompanyId = u.customerCompanyId
+        }
+      }
+      return token
+    },
+    async session({ session, token }) {
+      (session as any).user.id = token.sub as string
+      ;(session as any).user.role = token.role
+      ;(session as any).user.workspaceId = token.workspaceId
+      ;(session as any).user.customerCompanyId = token.customerCompanyId
+      return session
+    }
+  }
+}
