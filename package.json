@@ -6,6 +6,9 @@
   "engines": {
     "node": ">=18.18.0"
   },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -17,7 +20,8 @@
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
     "worker": "tsx src/worker/index.ts",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "migrate:deploy": "prisma migrate deploy"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.637.0",
