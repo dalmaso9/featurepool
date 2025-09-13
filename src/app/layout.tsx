@@ -3,7 +3,7 @@ import AuthProvider from '@/components/AuthProvider'
 import { ReactNode } from 'react'
 
 export const metadata = {
-  title: 'Feature Requests',
+  title: 'Featurepool',
   description: 'Gestão de pedidos de funcionalidades'
 }
 

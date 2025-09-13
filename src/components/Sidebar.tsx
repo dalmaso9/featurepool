@@ -36,7 +36,7 @@ export default function Sidebar() {
   return (
     <aside className={cx('border-r bg-white transition-all flex flex-col', 'w-64')}>
       <div className="h-14 flex items-center justify-between px-3 border-b">
-        <span className={cx('text-sm font-semibold', collapsed && 'opacity-0 pointer-events-none')}>Feature Requests</span>
+        <span className={cx('text-sm font-semibold', collapsed && 'opacity-0 pointer-events-none')}>Featurepool</span>
         {/* Controles de colapso desativados */}
       </div>
       <nav className="p-2 space-y-1 flex-1">

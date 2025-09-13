@@ -5,7 +5,7 @@ export default function PublicNavbar({ workspaceName, isLoggedIn }: { workspaceN
     <header className="sticky top-0 z-40 border-b bg-white/80 backdrop-blur">
       <div className="container-app flex h-14 items-center justify-between">
         <div className="flex items-center gap-6">
-          <span className="text-sm font-semibold">{workspaceName || 'Feature Requests'}</span>
+          <span className="text-sm font-semibold">{workspaceName || 'Featurepool'}</span>
           <nav className="hidden md:flex items-center gap-2">
             <Link className="btn btn-ghost" href="/features">Funcionalidades</Link>
             <Link className="btn btn-ghost" href="/roadmap">Roadmap</Link>

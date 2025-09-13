@@ -1,4 +1,4 @@
-% Feature Requests App — MVP (Next.js + Prisma + NextAuth + Pusher + BullMQ)
+% Featurepool App — MVP (Next.js + Prisma + NextAuth + Pusher + BullMQ)
 
 Stack (atualizado):
 - Next.js 14 (App Router) + TypeScript + Tailwind
