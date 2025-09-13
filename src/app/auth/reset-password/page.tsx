@@ -1,10 +1,10 @@
 "use client"
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { resetPassword } from '@/actions/auth'
 
-export default function ResetPasswordPage() {
+function ResetPasswordInner() {
   const sp = useSearchParams()
   const token = sp.get('token') || ''
   const [pending, start] = useTransition()
@@ -60,3 +60,10 @@ export default function ResetPasswordPage() {
   )
 }
 
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<main className="flex min-h-[70vh] items-center justify-center"><div className="text-sm text-gray-600">Carregando...</div></main>}>
+      <ResetPasswordInner />
+    </Suspense>
+  )
+}

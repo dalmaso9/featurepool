@@ -1,13 +1,13 @@
+
 'use client'
 
 import { signIn } from 'next-auth/react'
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Eye, EyeSlash, Google, Apple } from "react-bootstrap-icons";
 
-
-export default function SignInPage() {
+function SignInInner() {
   const [showPass, setShowPass] = useState(false)
   const sp = useSearchParams()
   const resetOk = sp.get('reset') === '1'
@@ -88,5 +88,13 @@ export default function SignInPage() {
         </div>
       </div>
     </main>
+  )
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={<main className="flex min-h-[70vh] items-center justify-center"><div className="text-sm text-gray-600">Carregando...</div></main>}>
+      <SignInInner />
+    </Suspense>
   )
 }
