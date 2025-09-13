@@ -34,6 +34,11 @@ Usuários seeds:
 - Clientes (usuários externos) pertencem a uma `CustomerCompany` dentro de um `Workspace`.
 - Páginas públicas usam o workspace `demo` por padrão (ver `prisma/seed.ts`).
 
+### Tenant URLs (Subdomínios)
+- Configure `NEXT_PUBLIC_ROOT_DOMAIN` no `.env` (ex.: `featurepool.com`). Em dev, use `lvh.me` que resolve para `127.0.0.1` e permite subdomínios: `arista.lvh.me:3000`.
+- A raiz de subdomínios válidos redireciona para `/features` daquele workspace. Ex.: `arista.featurepool.com/` → `arista.featurepool.com/features`.
+- Domínio do app (ex. `app.featurepool.com` ou `localhost`) redireciona para `/auth/signin`.
+
 ## 🔢 Score
 - Configuração em **/admin** — pesos para nº de empresas, impacto, esforço, receita.
 - Cálculo em `src/lib/scoring.ts` e acionado em server actions e no worker (fila `recompute-score`).
@@ -49,6 +54,7 @@ Usuários seeds:
 ## 🔐 RBAC
 - Middleware protege `/dashboard` (COMPANY/ADMIN) e `/admin` (ADMIN).
 - Sessão inclui `role`, `workspaceId`, `customerCompanyId`.
+ - Páginas públicas (`/features`, `/roadmap`, `/changelog`) são abertas; o formulário de criar feature só aparece para COMPANY/ADMIN logados.
 
 ## 🛠️ Próximos passos
 - UI de autenticação dedicada (login/logout, página do NextAuth).

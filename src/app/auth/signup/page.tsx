@@ -10,6 +10,8 @@ export default function SignUpPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
+  const [showPass, setShowPass] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -17,6 +19,13 @@ export default function SignUpPage() {
     setError('')
 
     const formData = new FormData(e.currentTarget)
+    const pass = String(formData.get('password') || '')
+    const confirm = String(formData.get('confirmPassword') || '')
+    if (pass !== confirm) {
+      setError('As senhas não coincidem.')
+      setIsLoading(false)
+      return
+    }
     const result = await signupAction(formData)
 
     if (result?.error) {
@@ -24,11 +33,11 @@ export default function SignUpPage() {
       setIsLoading(false)
     } else if (result?.success) {
       // Fazer login automático após signup
-      await signIn('credentials', {
-        email: result.email,
-        redirect: false
-      })
-      router.push('/dashboard')
+      const email = formData.get('email') as string
+      const password = formData.get('password') as string
+      await signIn('credentials', { email, password, redirect: false })
+      if (result.createdWorkspace || result.role === 'COMPANY') router.push('/onboarding')
+      else router.push('/features')
     }
   }
 
@@ -72,28 +81,40 @@ export default function SignUpPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Nome da empresa</label>
-            <input
-              name="company"
-              type="text"
-              required
-              placeholder="Nome da sua empresa"
-              className="w-full rounded-md border px-3 py-2 text-sm"
-              disabled={isLoading}
-            />
+            <label className="block text-sm font-medium mb-1">Senha</label>
+            <div className="relative">
+              <input
+                name="password"
+                type={showPass ? 'text' : 'password'}
+                required
+                placeholder="Mínimo 8 caracteres"
+                className="w-full rounded-md border px-3 py-2 text-sm pr-10"
+                disabled={isLoading}
+              />
+              <button type="button" onClick={()=>setShowPass(s=>!s)} className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-600">
+                {showPass ? 'Ocultar' : 'Mostrar'}
+              </button>
+            </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Tipo de conta</label>
-            <select
-              name="role"
-              className="w-full rounded-md border px-3 py-2 text-sm"
-              disabled={isLoading}
-            >
-              <option value="CLIENT">Cliente (quero solicitar funcionalidades)</option>
-              <option value="COMPANY">Empresa (quero gerenciar funcionalidades)</option>
-            </select>
+            <label className="block text-sm font-medium mb-1">Confirmar senha</label>
+            <div className="relative">
+              <input
+                name="confirmPassword"
+                type={showConfirm ? 'text' : 'password'}
+                required
+                placeholder="Repita a senha"
+                className="w-full rounded-md border px-3 py-2 text-sm pr-10"
+                disabled={isLoading}
+              />
+              <button type="button" onClick={()=>setShowConfirm(s=>!s)} className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-600">
+                {showConfirm ? 'Ocultar' : 'Mostrar'}
+              </button>
+            </div>
           </div>
+
+          {/* Tipo de conta removido. Primeiro usuário do workspace vira admin automaticamente. */}
 
           <button 
             type="submit" 
@@ -111,6 +132,17 @@ export default function SignUpPage() {
               Entrar
             </Link>
           </p>
+        </div>
+
+        <div className="my-4 flex items-center gap-3">
+          <div className="h-px flex-1 bg-gray-200" />
+          <span className="text-xs text-gray-500">ou</span>
+          <div className="h-px flex-1 bg-gray-200" />
+        </div>
+
+        <div className="space-y-2">
+          <button disabled className="btn w-full border opacity-60 cursor-not-allowed">Criar conta com Google (desabilitado)</button>
+          <button disabled className="btn w-full border opacity-60 cursor-not-allowed">Criar conta com Apple (desabilitado)</button>
         </div>
       </div>
     </main>

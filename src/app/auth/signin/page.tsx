@@ -1,36 +1,70 @@
 'use client'
 
-import { getProviders, signIn } from 'next-auth/react'
-import { useEffect, useState } from 'react'
-import Image from 'next/image'
+import { signIn } from 'next-auth/react'
+import { useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { Eye, EyeSlash, Google, Apple } from "react-bootstrap-icons";
+
 
 export default function SignInPage() {
-  const [providers, setProviders] = useState<any>({})
-  useEffect(() => { getProviders().then(setProviders) }, [])
+  const [showPass, setShowPass] = useState(false)
+  const sp = useSearchParams()
+  const resetOk = sp.get('reset') === '1'
 
   const handleCredentials = async (e: any) => {
     e.preventDefault()
-    const email = new FormData(e.currentTarget).get('email') as string
-    await signIn('credentials', { email, redirect: true, callbackUrl: '/dashboard' })
+    const fd = new FormData(e.currentTarget)
+    const email = fd.get('email') as string
+    const password = fd.get('password') as string
+    await signIn('credentials', { email, password, redirect: true, callbackUrl: '/dashboard' })
   }
 
   return (
     <main className="flex min-h-[70vh] items-center justify-center">
       <div className="card w-full max-w-md p-6">
         <h1 className="text-xl font-semibold text-center mb-1">Entrar</h1>
+        {resetOk && (
+          <div className="mb-3 p-3 bg-green-50 border border-green-200 rounded-md text-sm text-green-700 text-center">
+            Senha redefinida com sucesso. Faça login.
+          </div>
+        )}
         <p className="text-center text-sm text-gray-600 mb-6">Acesse sua conta para gerenciar funcionalidades e roadmap.</p>
 
         <form onSubmit={handleCredentials} className="space-y-3">
-          <label className="block text-sm font-medium">Email</label>
-          <input
-            name="email"
-            type="email"
-            required
-            placeholder="voce@empresa.com"
-            className="w-full rounded-md border px-3 py-2 text-sm"
-          />
-          <button type="submit" className="btn btn-primary w-full">Entrar com email</button>
+          <div>
+            <label className="block text-sm font-medium">Email</label>
+            <input
+              name="email"
+              type="email"
+              required
+              placeholder="voce@empresa.com"
+              className="w-full rounded-md border px-3 py-2 text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium">Senha</label>
+            <div className="relative">
+              <input
+                name="password"
+                type={showPass ? 'text' : 'password'}
+                required
+                placeholder="Sua senha"
+                className="w-full rounded-md border px-3 py-2 text-sm pr-10"
+              />
+              <button 
+                type="button" 
+                onClick={()=>setShowPass(s=>!s)} 
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-600"
+              >
+                {showPass ? <EyeSlash size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+          </div>
+          <div className="flex items-center justify-between">
+            <button type="submit" className="btn btn-primary">Entrar</button>
+            <Link href="/auth/forgot-password" className="text-sm text-gray-600 hover:text-gray-800">Esqueceu a senha?</Link>
+          </div>
         </form>
 
         <div className="mt-6 text-center">
@@ -49,18 +83,8 @@ export default function SignInPage() {
         </div>
 
         <div className="space-y-2">
-          {Object.values(providers).filter((p:any)=>p.id!=='credentials').length === 0 && (
-            <p className="text-xs text-gray-500 text-center">Configure Google/Microsoft no .env para habilitar SSO.</p>
-          )}
-          {Object.values(providers).filter((p:any)=>p.id!=='credentials').map((provider: any) => (
-            <button
-              key={provider.name}
-              onClick={() => signIn(provider.id, { callbackUrl: '/dashboard' })}
-              className="btn w-full border"
-            >
-              Entrar com {provider.name}
-            </button>
-          ))}
+          <button disabled className="btn w-full border opacity-60 cursor-not-allowed flex items-center justify-center gap-2">Entrar com Google <Google size={18} /></button>
+          <button disabled className="btn w-full border opacity-60 cursor-not-allowed flex items-center justify-center gap-2">Entrar com Apple <Apple size={18} /></button>
         </div>
       </div>
     </main>

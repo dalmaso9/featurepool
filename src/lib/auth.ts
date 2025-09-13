@@ -5,6 +5,7 @@ import AzureADProvider from 'next-auth/providers/azure-ad'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import { prisma } from './prisma'
 import { env } from './env'
+import { verifyPassword } from './password'
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as any,
@@ -17,10 +18,15 @@ export const authOptions: NextAuthOptions = {
       name: 'Credentials',
       credentials: {
         email: { label: 'Email', type: 'email' },
+        password: { label: 'Senha', type: 'password' }
       },
       authorize: async (credentials) => {
-        if (!credentials?.email) return null
+        if (!credentials?.email || !credentials?.password) return null
         const user = await prisma.user.findUnique({ where: { email: credentials.email } })
+        const passwordHash = (user as any)?.passwordHash as string | undefined
+        if (!user || !passwordHash) return null
+        const ok = await verifyPassword(credentials.password as string, passwordHash)
+        if (!ok) return null
         return user as any
       }
     }),
