@@ -1,4 +1,5 @@
 import { PrismaClient, Role } from '@prisma/client'
+import { fa } from 'zod/v4/locales'
 const prisma = new PrismaClient()
 
 async function main() {
@@ -25,12 +26,26 @@ async function main() {
   const companyUser = await prisma.user.upsert({
     where: { email: 'pm@demo.local' },
     update: {},
-    create: {
+    create: ({
       email: 'pm@demo.local',
       name: 'Product Manager',
       role: Role.COMPANY,
+      workspaceAdmin: false,
       workspaceId: workspace.id
-    }
+    }) as any
+  })
+
+  // Internal user (company)
+  const companyAdmin = await prisma.user.upsert({
+    where: { email: 'pd@demo.local' },
+    update: {},
+    create: ({
+      email: 'pd@demo.local',
+      name: 'Product Designer',
+      role: Role.ADMIN,
+      workspaceAdmin: true,
+      workspaceId: workspace.id
+    }) as any
   })
 
   // External customer company
@@ -64,7 +79,7 @@ async function main() {
       description: 'Permitir exportação do dashboard em CSV.',
       impact: 4,
       effort: 2,
-      createdById: companyUser.id
+      createdById: companyAdmin.id
     }
   })
 

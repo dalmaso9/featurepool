@@ -46,12 +46,14 @@ export const authOptions: NextAuthOptions = {
         token.role = (user as any).role
         token.workspaceId = (user as any).workspaceId
         token.customerCompanyId = (user as any).customerCompanyId
+        token.workspaceAdmin = (user as any).workspaceAdmin
       } else if (token.sub) {
         const u = await prisma.user.findUnique({ where: { id: token.sub } })
         if (u) {
           token.role = u.role
           token.workspaceId = u.workspaceId
           token.customerCompanyId = u.customerCompanyId
+          ;(token as any).workspaceAdmin = (u as any).workspaceAdmin
         }
       }
       return token
@@ -61,6 +63,7 @@ export const authOptions: NextAuthOptions = {
       ;(session as any).user.role = token.role
       ;(session as any).user.workspaceId = token.workspaceId
       ;(session as any).user.customerCompanyId = token.customerCompanyId
+      ;(session as any).user.workspaceAdmin = (token as any).workspaceAdmin
       return session
     }
   }

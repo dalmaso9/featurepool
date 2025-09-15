@@ -29,6 +29,8 @@ model User {
   passwordHash String? @db.Text
   // RBAC
   role  Role    @default(CLIENT)
+  // Flag: administrador do workspace (primeiro usuário)
+  workspaceAdmin Boolean @default(false)
 
   // Multi-tenant
   workspaceId String?

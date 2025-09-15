@@ -7,11 +7,12 @@ import Metrics from './metrics'
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions)
   const workspaceId = (session as any)?.user?.workspaceId
+  const isWsAdmin = !!(session as any)?.user?.workspaceAdmin
   if (!workspaceId) {
     return <main>Sem workspace associado ao usuário.</main>
   }
   const workspace = await prisma.workspace.findUnique({ where: { id: workspaceId } })
-  if (workspace && !workspace.onboardingCompleted) {
+  if (workspace && !workspace.onboardingCompleted && isWsAdmin) {
     redirect('/onboarding')
   }
   const features = await prisma.feature.findMany({

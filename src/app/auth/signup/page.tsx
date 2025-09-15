@@ -36,8 +36,8 @@ export default function SignUpPage() {
       const email = formData.get('email') as string
       const password = formData.get('password') as string
       await signIn('credentials', { email, password, redirect: false })
-      if (result.createdWorkspace || result.role === 'COMPANY') router.push('/onboarding')
-      else router.push('/features')
+      if (result.onboardingNeeded) router.push('/onboarding')
+      else router.push('/dashboard')
     }
   }
 

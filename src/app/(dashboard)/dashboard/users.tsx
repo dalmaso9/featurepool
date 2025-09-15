@@ -3,7 +3,7 @@
 import { useTransition } from 'react'
 import { updateWorkspaceUserRole } from '@/actions/admin'
 
-export default function UsersManager({ users }:{ users: { id: string, name: string|null, email: string|null, role: 'CLIENT'|'COMPANY'|'ADMIN' }[] }) {
+export default function UsersManager({ users }:{ users: { id: string, name: string|null, email: string|null, role: 'CLIENT'|'COMPANY'|'ADMIN', workspaceAdmin?: boolean }[] }) {
   const [pending, start] = useTransition()
 
   const onChange = (id: string, role: 'CLIENT'|'COMPANY') => {
@@ -32,8 +32,11 @@ export default function UsersManager({ users }:{ users: { id: string, name: stri
                 className="rounded-md border px-2 py-1 text-sm"
               >
                 <option value="CLIENT">Cliente</option>
-                <option value="COMPANY">Colaborador (admin do espaço)</option>
+                <option value="COMPANY">Colaborador</option>
               </select>
+            )}
+            {u.workspaceAdmin && u.role !== 'ADMIN' && (
+              <span className="ml-2 inline-flex items-center rounded bg-indigo-50 px-2 py-0.5 text-[10px] font-medium text-indigo-700 border border-indigo-100">admin do espaço</span>
             )}
           </div>
         ))}
@@ -41,4 +44,3 @@ export default function UsersManager({ users }:{ users: { id: string, name: stri
     </section>
   )
 }
-
