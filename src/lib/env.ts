@@ -1,9 +1,11 @@
 import { z } from 'zod'
 
 const envSchema = z.object({
-  DATABASE_URL: z.string().url(),
-  NEXTAUTH_URL: z.string().url(),
-  NEXTAUTH_SECRET: z.string(),
+  // Em ambientes com PgBouncer (ex.: Supabase/6543) a URL ainda é válida, mas não precisa validar como URL HTTP.
+  DATABASE_URL: z.string().min(1),
+  // Em build/preview, NEXTAUTH_URL pode não estar presente. Tornar opcional evita quebrar o build.
+  NEXTAUTH_URL: z.string().url().optional(),
+  NEXTAUTH_SECRET: z.string().min(1),
 
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
