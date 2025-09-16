@@ -35,7 +35,12 @@ export default function SignUpPage() {
       // Fazer login automático após signup
       const email = formData.get('email') as string
       const password = formData.get('password') as string
-      await signIn('credentials', { email, password, redirect: false })
+      const res = await signIn('credentials', { email, password, redirect: false })
+      if (res?.error) {
+        setError('Não foi possível iniciar a sessão automaticamente. Faça login com seu email e senha.')
+        setIsLoading(false)
+        return
+      }
       if (result.onboardingNeeded) router.push('/onboarding')
       else router.push('/dashboard')
     }

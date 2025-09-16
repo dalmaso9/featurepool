@@ -97,40 +97,26 @@ export async function signupAction(formData: FormData) {
       const baseSlug = companyBase || 'minha-empresa'
       let slug = baseSlug
       let i = 0
-      // Evitar colisões de slug em ambientes concorrentes
+      // Tentar até 50 variações de slug; só tratar colisão (P2002). Outros erros devem ser lançados.
+      // Isso evita loop infinito quando o banco está indisponível ou há outro erro.
       for (;;) {
-        try {
-          const workspace = await prisma.workspace.create({
-            data: { name: 'Minha empresa', slug }
-          })
-          wsIdToUse = workspace.id
-          workspaceAdmin = true // quem cria é admin
-          break
-        } catch (e) {
-          slug = `${baseSlug}-${++i}`
-        }
-      }
-
-      // failsafe: se ainda assim não tiver valor, joga erro explícito
-      if (!wsIdToUse) {
-        throw new Error('Falha ao resolver workspace (wsIdToUse vazio).')
-      }
-
-      {/*for (;;) {
         try {
           const workspace = await prisma.workspace.create({ data: { name: 'Minha empresa', slug } })
           wsIdToUse = workspace.id
+          workspaceAdmin = true // quem cria é admin
           break
         } catch (e: any) {
-          if (e?.code === 'P2002' && e?.meta?.target?.includes('slug')) {
+          const isUniqueSlug = e?.code === 'P2002' && Array.isArray(e?.meta?.target) ? e.meta.target.includes('slug') : String(e?.message ?? '').toLowerCase().includes('unique') && String(e?.message ?? '').toLowerCase().includes('slug')
+          if (isUniqueSlug) {
             i++
-            slug = `${baseSlug}-${i}`
             if (i > 50) throw new Error('Falha ao gerar slug único do workspace')
+            slug = `${baseSlug}-${i}`
             continue
           }
           throw e
         }
-      }*/}
+      }
+
       onboardingNeeded = true
       createdWorkspace = true
       role = 'COMPANY'
@@ -143,7 +129,8 @@ export async function signupAction(formData: FormData) {
       name: data.name,
       email: data.email,
       role: role as any,
-      passwordHash
+      passwordHash,
+      workspaceAdmin
     }
     // Prefer conectar via relação para evitar diferenças de schema entre ambientes
     if (wsIdToUse) {

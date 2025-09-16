@@ -1,5 +1,6 @@
 import { PrismaClient, Role } from '@prisma/client'
 import { fa } from 'zod/v4/locales'
+import { hashPassword } from '../src/lib/password'
 const prisma = new PrismaClient()
 
 async function main() {
@@ -31,7 +32,8 @@ async function main() {
       name: 'Product Manager',
       role: Role.COMPANY,
       workspaceAdmin: false,
-      workspaceId: workspace.id
+      workspaceId: workspace.id,
+      passwordHash: await hashPassword('demo12345')
     }) as any
   })
 
@@ -44,7 +46,8 @@ async function main() {
       name: 'Product Designer',
       role: Role.ADMIN,
       workspaceAdmin: true,
-      workspaceId: workspace.id
+      workspaceId: workspace.id,
+      passwordHash: await hashPassword('demo12345')
     }) as any
   })
 
@@ -67,7 +70,8 @@ async function main() {
       name: 'ACME Client',
       role: Role.CLIENT,
       workspaceId: workspace.id,
-      customerCompanyId: acme.id
+      customerCompanyId: acme.id,
+      passwordHash: await hashPassword('demo12345')
     }
   })
 

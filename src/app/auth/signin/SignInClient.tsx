@@ -9,6 +9,18 @@ export default function SignInClient() {
   const [showPass, setShowPass] = useState(false)
   const sp = useSearchParams()
   const resetOk = sp.get('reset') === '1'
+  const errorParam = sp.get('error')
+  const errorMessage = (() => {
+    if (!errorParam) return null
+    switch (errorParam) {
+      case 'CredentialsSignin':
+        return 'Email ou senha incorretos.'
+      case 'AccessDenied':
+        return 'Acesso negado.'
+      default:
+        return 'Não foi possível entrar. Tente novamente.'
+    }
+  })()
 
   const handleCredentials = async (e: any) => {
     e.preventDefault()
@@ -25,6 +37,11 @@ export default function SignInClient() {
         {resetOk && (
           <div className="mb-3 p-3 bg-green-50 border border-green-200 rounded-md text-sm text-green-700 text-center">
             Senha redefinida com sucesso. Faça login.
+          </div>
+        )}
+        {errorMessage && (
+          <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-600 text-center">
+            {errorMessage}
           </div>
         )}
         <p className="text-center text-sm text-gray-600 mb-6">Acesse sua conta para gerenciar funcionalidades e roadmap.</p>
@@ -88,4 +105,3 @@ export default function SignInClient() {
     </main>
   )
 }
-
