@@ -25,8 +25,12 @@ model User {
   name  String?
   email String? @unique
   image String?
+  // Auth local
+  passwordHash String? @db.Text
   // RBAC
   role  Role    @default(CLIENT)
+  // Flag: administrador do workspace (primeiro usuário)
+  workspaceAdmin Boolean @default(false)
 
   // Multi-tenant
   workspaceId String?
@@ -54,6 +58,10 @@ model Workspace {
   id         String            @id @default(cuid())
   name       String
   slug       String            @unique
+  // Se desabilitado, páginas públicas exigem login com usuário interno do workspace
+  publicAccessEnabled Boolean   @default(true)
+  // Marca se o onboarding inicial foi concluído
+  onboardingCompleted Boolean   @default(false)
   users      User[]
   features   Feature[]
   changelogs ChangelogEntry[]
@@ -73,7 +81,9 @@ model CustomerCompany {
   size            String? // porte
   segment         String? // segmento
   strategicWeight Int      @default(1)
-  revenue         Decimal?
+  // Receita mensal e nº de colaboradores para motor de score
+  monthlyRevenue  Decimal?
+  employees       Int?
 
   users        User[]
   interestedIn FeatureInterestedCompany[]
@@ -134,6 +144,11 @@ model FeatureInterestedCompany {
 
   feature         Feature         @relation(fields: [featureId], references: [id])
   customerCompany CustomerCompany @relation(fields: [customerCompanyId], references: [id])
+
+  // optional metadata about the interest
+  contact       String?
+  internalAgent String?
+  notes         String?
 
   createdAt DateTime @default(now())
 
@@ -200,6 +215,7 @@ model ScoringConfig {
   weightImpact    Int @default(3)
   weightEffort    Int @default(-2)
   weightRevenue   Int @default(0)
+  weightEmployees Int @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

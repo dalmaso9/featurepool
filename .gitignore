@@ -14,3 +14,8 @@ coverage/
 # Env
 .env
 .env.*
+
+# TypeScript build info
+*.tsbuildinfo
+.tsbuildcache/
+.vercel

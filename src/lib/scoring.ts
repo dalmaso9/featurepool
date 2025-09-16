@@ -24,11 +24,21 @@ export async function recomputeFeatureScore(featureId: string) {
   const impact = feature.impact ?? 0
   const effort = feature.effort ?? 0
   const revenueSum = feature.interestedCos.reduce((acc, ic) => {
-    const r = ic.customerCompany.revenue ? Number(ic.customerCompany.revenue) : 0
+    const r = ic.customerCompany.monthlyRevenue ? Number(ic.customerCompany.monthlyRevenue) : 0
     return acc + (r > 0 ? Math.log10(r) : 0)
   }, 0)
+  const employeesSum = feature.interestedCos.reduce((acc, ic) => {
+    const e = ic.customerCompany.employees ?? 0
+    // usa log para não explodir pontuação em clientes muito grandes
+    return acc + Math.log10(1 + Math.max(0, e))
+  }, 0)
 
-  const score = (wCompanies * companiesCount) + (wImpact * impact) + (wEffort * effort) + (wRevenue * revenueSum)
+  const wEmployees = cfg?.weightEmployees ?? 0
+  const score = (wCompanies * companiesCount)
+    + (wImpact * impact)
+    + (wEffort * effort)
+    + (wRevenue * revenueSum)
+    + (wEmployees * employeesSum)
   await prisma.feature.update({
     where: { id: feature.id },
     data: { score }
