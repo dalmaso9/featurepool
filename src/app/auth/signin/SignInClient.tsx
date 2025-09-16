@@ -16,7 +16,7 @@ export default function SignInClient() {
       case 'CredentialsSignin':
         return 'Email ou senha incorretos.'
       case 'AccessDenied':
-        return 'Acesso negado.'
+        return 'Conta não encontrada. Crie uma conta primeiro.'
       default:
         return 'Não foi possível entrar. Tente novamente.'
     }

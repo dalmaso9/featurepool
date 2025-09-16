@@ -12,6 +12,7 @@ export const authOptions: NextAuthOptions = {
   session: { strategy: 'jwt' },
   pages: {
     signIn: '/auth/signin',
+    error: '/auth/signin', // redireciona erros para a nossa página customizada
   },
   providers: [
     CredentialsProvider({
@@ -41,6 +42,16 @@ export const authOptions: NextAuthOptions = {
     })] : [])
   ],
   callbacks: {
+    // Bloquear criação automática de usuários via OAuth (ex.: Google/Azure)
+    async signIn({ user, account }) {
+      if (!account) return false
+      if (account.provider === 'credentials') return true
+      // Para OAuth: permitir somente se usuário já existir no banco
+      const email = user?.email
+      if (!email) return false
+      const existing = await prisma.user.findUnique({ where: { email } })
+      return !!existing
+    },
     async jwt({ token, user }) {
       if (user) {
         token.role = (user as any).role
