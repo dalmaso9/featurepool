@@ -72,7 +72,7 @@ export async function signupAction(formData: FormData) {
     let createdWorkspace = false
     // Todos internos continuam com role COMPANY; admin é marcado por flag
     let role: 'COMPANY' | 'CLIENT' | 'ADMIN' = 'COMPANY'
-    let wsIdToUse: string
+    let wsIdToUse: string | null = null
     let workspaceAdmin = false
 
     if (workspaceId) {
@@ -100,6 +100,24 @@ export async function signupAction(formData: FormData) {
       // Evitar colisões de slug em ambientes concorrentes
       for (;;) {
         try {
+          const workspace = await prisma.workspace.create({
+            data: { name: 'Minha empresa', slug }
+          })
+          wsIdToUse = workspace.id
+          workspaceAdmin = true // quem cria é admin
+          break
+        } catch (e) {
+          slug = `${baseSlug}-${++i}`
+        }
+      }
+
+      // failsafe: se ainda assim não tiver valor, joga erro explícito
+      if (!wsIdToUse) {
+        throw new Error('Falha ao resolver workspace (wsIdToUse vazio).')
+      }
+
+      {/*for (;;) {
+        try {
           const workspace = await prisma.workspace.create({ data: { name: 'Minha empresa', slug } })
           wsIdToUse = workspace.id
           break
@@ -112,7 +130,7 @@ export async function signupAction(formData: FormData) {
           }
           throw e
         }
-      }
+      }*/}
       onboardingNeeded = true
       createdWorkspace = true
       role = 'COMPANY'

@@ -18,3 +18,4 @@ coverage/
 # TypeScript build info
 *.tsbuildinfo
 .tsbuildcache/
+.vercel
