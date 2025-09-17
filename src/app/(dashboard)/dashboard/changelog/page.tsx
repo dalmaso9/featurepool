@@ -25,8 +25,8 @@ export default async function ChangelogInternalPage() {
   return (
     <main className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Changelog (interno)</h1>
-        <PublicViewLinks />
+        <h1 className="text-xl font-semibold">Changelog</h1>
+        {/*<PublicViewLinks />*/}
       </div>
       <form action={action} className="rounded-lg border bg-white p-4 space-y-2 max-w-xl">
         <input name="title" className="w-full rounded-md border px-3 py-2 text-sm" placeholder="Título" required />

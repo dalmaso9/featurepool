@@ -61,8 +61,8 @@ export default async function FeaturesInternalPage({ searchParams }:{ searchPara
 
       <section className="space-y-3">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold">Funcionalidades (interno)</h1>
-          <PublicViewLinks />
+          <h1 className="text-xl font-semibold">Funcionalidades</h1>
+          {/*<PublicViewLinks />*/}
         </div>
         <div className="grid grid-cols-1 gap-3">
           {features.map(f => (
