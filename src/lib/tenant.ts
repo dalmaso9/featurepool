@@ -23,3 +23,17 @@ export async function getWorkspaceFromHost(host?: string) {
   const ws = await prisma.workspace.findUnique({ where: { slug: sub } })
   return ws
 }
+
+function sanitizeRootDomain() {
+  return ROOT_DOMAIN.replace(/^https?:\/\//, '')
+}
+
+export function buildWorkspacePublicUrl(slug: string, path = '/') {
+  const sanitized = sanitizeRootDomain()
+  const [domain, port] = sanitized.split(':')
+  const isLocal = domain === 'localhost' || domain === '127.0.0.1' || domain.endsWith('.localhost') || domain === 'lvh.me' || domain.endsWith('.lvh.me')
+  const protocol = isLocal || !!port ? 'http' : 'https'
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`
+  const portSegment = port ? `:${port}` : ''
+  return `${protocol}://${slug}.${domain}${portSegment}${normalizedPath}`
+}

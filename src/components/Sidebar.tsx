@@ -34,12 +34,12 @@ export default function Sidebar() {
   )
 
   return (
-    <aside className={cx('border-r bg-white transition-all flex flex-col', 'w-64')}>
+    <aside className={cx('border-r bg-white transition-all flex flex-col sticky top-0 h-screen self-start', 'w-64')}>
       <div className="h-14 flex items-center justify-between px-3 border-b">
         <span className={cx('text-sm font-semibold', collapsed && 'opacity-0 pointer-events-none')}>Featurepool</span>
         {/* Controles de colapso desativados */}
       </div>
-      <nav className="p-2 space-y-1 flex-1">
+      <nav className="p-2 space-y-1 flex-1 overflow-y-auto">
         <NavLink href="/dashboard" label="Dashboard" />
         <div className="h-px bg-gray-200 my-2" />
         <NavLink href="/dashboard/features" label="Funcionalidades" />
