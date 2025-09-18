@@ -42,13 +42,13 @@ export default function WorkspaceSettingsForm({ workspaceId, initialSlug, initia
               className="w-64 rounded-md border px-3 py-2 text-sm"
               placeholder="minha-empresa"
             />
-            <span className="text-xs text-gray-600">Subdomínio: {slug || 'minha-empresa'}.lvh.me:3000 (dev) • {slug || 'minha-empresa'}.featurepool.com (prod)</span>
+            <span className="text-xs text-gray-600">Subdomínio: {/*{slug || 'minha-empresa'}.lvh.me:3000 (dev) •*/} {slug || 'minha-empresa'}.featurepool.com</span>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
           <input id="publicAccess" type="checkbox" checked={publicAccess} onChange={e=>setPublicAccess(e.target.checked)} />
-          <label htmlFor="publicAccess" className="text-sm">Permitir acesso público às páginas (Features/Roadmap/Changelog)</label>
+          <label htmlFor="publicAccess" className="text-sm">Permitir acesso público às páginas (Features / Roadmap / Changelog)</label>
         </div>
 
         {error && <div className="text-sm text-red-600">{error}</div>}

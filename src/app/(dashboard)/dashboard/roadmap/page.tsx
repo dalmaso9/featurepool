@@ -18,7 +18,7 @@ export default async function RoadmapInternalPage() {
     <main className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Roadmap</h1>
-        {/* <PublicViewLinks workspaceId={wid} /> */}
+        <PublicViewLinks workspaceId={wid} />
       </div>
       <KanbanBoard items={items} canEdit={true} />
     </main>
