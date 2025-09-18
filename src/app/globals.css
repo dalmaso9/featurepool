@@ -12,12 +12,14 @@ html, body { height: 100%; }
 
 /* Background em pages públicas (leve, inspirado na LP) */
 .body-surface {
-  background:
+  min-height: 100vh;
+  background-color: #f8fafc;
+  background-image:
     radial-gradient(1200px 600px at 50% -200px, color-mix(in srgb, var(--brand-from) 18%, white 82%), transparent),
     radial-gradient(900px 500px at 120% -100px, color-mix(in srgb, var(--brand-to) 22%, white 78%), transparent),
-    radial-gradient(1400px 700px at 50% 120%, color-mix(in srgb, var(--brand-to) 16%, white 84%), transparent),
-    #f8fafc;
+    linear-gradient(180deg, color-mix(in srgb, var(--brand-to) 18%, white 82%) 0%, color-mix(in srgb, var(--brand-to) 8%, white 92%) 35%, #f8fafc 100%);
   background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 @layer components{
